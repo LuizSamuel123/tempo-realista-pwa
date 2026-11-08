@@ -1,0 +1,21 @@
+TEMPO REALISTA — INSTALAÇÃO EM CASA
+===================================
+
+1. Baixe o arquivo ZIP do Google Drive.
+2. Clique com o botão direito no ZIP e escolha "Extrair tudo".
+3. Abra a pasta extraída.
+4. Execute INICIAR_APP.bat.
+5. Nas próximas vezes, execute apenas INICIAR_APP.bat.
+
+O arquivo backend\data\tempo_realista.db contém seus compromissos e demais dados.
+Não apague esse arquivo.
+
+Se o Windows exibir uma proteção ao executar o arquivo:
+1. Clique em "Mais informações".
+2. Confira que o arquivo está dentro da pasta que você baixou.
+3. Clique em "Executar assim mesmo".
+
+O aplicativo funciona localmente em:
+http://127.0.0.1:8000
+
+Ele não precisa do Google Drive para funcionar depois de instalado.

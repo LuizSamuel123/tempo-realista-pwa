@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f0e8">
+    <meta name="description" content="Gerenciamento de tempo local e sem pressão.">
+    <meta name="application-name" content="Tempo Realista">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Tempo Realista">
+    <link rel="manifest" href="/static/manifest.webmanifest">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icon-192.png">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    <link rel="stylesheet" href="/static/styles.css?v=58">
+    <title>Tempo Realista</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/">
+        <p class="eyebrow">SEU TEMPO, SEM PRESSÃO</p>
+        <h1>Tempo Realista</h1>
+      </a>
+      <div class="header-actions">
+        <button id="info-toggle" class="info-toggle" type="button" aria-label="Mostrar informações" aria-controls="info-panel" aria-expanded="false" title="Mostrar informações">i</button>
+        <button id="top-radar-toggle" class="top-radar-toggle" type="button" aria-controls="radar-panel" aria-expanded="false" title="Abrir radar">Radar</button>
+        <button id="install-app" class="button install hidden" type="button">Instalar</button>
+        <button id="refresh-app" class="button secondary refresh-button" data-refresh type="button" title="Atualizar celular e desktop"><span aria-hidden="true">↻</span> Atualizar</button>
+        <button id="phone-server" class="button secondary" type="button" title="Ligar servidor para o celular">📱 Celular</button>
+        <button class="button secondary" data-open="milestone-dialog" type="button">+ Marco</button>
+        <button class="button primary" data-open="block-dialog" type="button">+ Compromisso</button>
+        <button id="bell" class="bell" type="button" aria-label="Ir para os lembretes de hoje">
+          🔔<span id="bell-dot" class="bell-dot hidden" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <div id="info-panel" class="info-panel hidden">
+        <section class="intro">
+          <div>
+            <p class="eyebrow" id="today-label">HOJE</p>
+            <p>Organize o que é rígido. Mova o que é flexível. Registre o dia como ele foi.</p>
+          </div>
+          <button class="button primary mobile-add" data-open="block-dialog" type="button">+ Adicionar</button>
+        </section>
+
+        <section id="app-status" class="app-status hidden" aria-live="polite">
+          <div>
+            <strong id="app-status-title">Tempo Realista</strong>
+            <p id="app-status-text">Pronto para usar.</p>
+          </div>
+          <button id="status-install" class="button secondary hidden" type="button">Instalar</button>
+        </section>
+      </div>
+
+      <section id="christmas-countdown" class="christmas-countdown hidden" aria-live="polite">
+        <span class="christmas-icon" aria-hidden="true">🎄</span>
+        <div>
+          <p class="eyebrow">CONTAGEM DE NATAL</p>
+          <strong id="christmas-countdown-value">faltam alguns dias para o Natal</strong>
+          <small>até a meia-noite do dia 25</small>
+        </div>
+      </section>
+
+      <section id="new-year-countdown" class="christmas-countdown hidden" aria-live="polite">
+        <span class="christmas-icon" aria-hidden="true">🎆</span>
+        <div>
+          <p class="eyebrow">CONTAGEM DE ANO NOVO</p>
+          <strong id="new-year-countdown-value">faltam alguns dias para o Ano Novo</strong>
+          <small>até a meia-noite do dia 1º</small>
+        </div>
+      </section>
+
+      <div class="workspace">
+        <section id="agenda-section" class="panel agenda-panel" aria-labelledby="agenda-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">VISÃO MENSAL</p>
+              <h2 id="agenda-title">Meu mês</h2>
+            </div>
+            <div class="month-navigation" aria-label="Navegação entre meses">
+              <button id="previous-month" class="month-button" type="button" aria-label="Mês anterior">‹</button>
+              <button id="current-month" class="month-today-button" type="button">Hoje</button>
+              <button id="next-month" class="month-button" type="button" aria-label="Próximo mês">›</button>
+            </div>
+          </div>
+          <section id="radar-panel" class="calendar-radar" aria-labelledby="radar-title">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">ATÉ 20 DIAS</p>
+                <h2 id="radar-title">Compromissos e marcos</h2>
+              </div>
+              <button id="radar-toggle" class="radar-toggle" type="button" aria-controls="radar" aria-expanded="false">Abrir radar</button>
+              <span class="black-key">⚫</span>
+            </div>
+            <div id="radar" class="radar-list" aria-live="polite">
+              <p class="empty">Carregando com calma…</p>
+            </div>
+          </section>
+          <div id="agenda" class="month-calendar" aria-live="polite">
+            <p class="empty">Carregando seu mês…</p>
+          </div>
+        </section>
+
+        <aside class="side-column">
+          <section class="panel" aria-labelledby="backlog-title">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">SEM DATA</p>
+                <h2 id="backlog-title">Sem data</h2>
+              </div>
+              <span>🟡</span>
+            </div>
+            <div id="backlog" class="backlog-list" aria-live="polite"></div>
+          </section>
+        </aside>
+      </div>
+
+    </main>
+
+    <dialog id="block-dialog">
+      <form id="block-form" class="dialog-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">NOVO BLOCO DE TEMPO</p>
+            <h2>Adicionar à agenda</h2>
+          </div>
+          <button class="icon-button" data-close type="button" aria-label="Fechar">×</button>
+        </div>
+
+        <label>O que é?
+          <input name="title" maxlength="160" placeholder="Ex.: Aula de Cálculo, Estágio" required>
+        </label>
+
+        <label>Emoji
+          <input name="icon" maxlength="128" placeholder="Ex.: 🖥️ ou /static/icons/serra-gaucha.png">
+        </label>
+        <label>Cor
+          <input name="color" type="color" value="#2563eb">
+        </label>
+        <div class="emoji-picker" data-emoji-picker="block-form" aria-label="Escolher emoji">
+          <button type="button" data-emoji="🖥️" title="Computador">🖥️</button>
+          <button type="button" data-emoji="🏫" title="Faculdade">🏫</button>
+          <button type="button" data-emoji="🪜" title="Estágio">🪜</button>
+          <button type="button" data-emoji="👻" title="Centro Espírita">👻</button>
+          <button type="button" data-emoji="🌀" title="Terapia">🌀</button>
+          <button type="button" data-emoji="📚" title="Estudo">📚</button>
+          <button type="button" data-emoji="🧮" title="Cálculo">🧮</button>
+          <button type="button" data-emoji="📝" title="Trabalho">📝</button>
+          <button type="button" data-emoji="⭐" title="Importante">⭐</button>
+        </div>
+
+        <fieldset>
+          <legend>Como esse tempo funciona?</legend>
+          <div class="category-options">
+            <label class="category-choice red">
+              <input type="radio" name="category" value="red" checked>
+              <span>🔴 <strong>Concreto</strong><small>Aula, estágio, compromisso fixo</small></span>
+            </label>
+            <label class="category-choice green">
+              <input type="radio" name="category" value="green">
+              <span>🟢 <strong>Líquido</strong><small>Estudo, descanso, pode mudar</small></span>
+            </label>
+            <label class="category-choice yellow">
+              <input type="radio" name="category" value="yellow">
+              <span>🟡 <strong>Sem data</strong><small>Conta, burocracia, lembrete</small></span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="form-row">
+          <label>Data
+            <input id="block-date" name="scheduled_date" type="date" required>
+          </label>
+          <label>Começa
+            <input name="start_time" type="time">
+          </label>
+          <label>Termina
+            <input name="end_time" type="time">
+          </label>
+        </div>
+
+        <label class="check-row">
+          <input id="repeat-weekly" name="repeat_weekly" type="checkbox">
+          <span>Repetir <small>Ideal para aulas, estágio e encontros quinzenais</small></span>
+        </label>
+        <div id="repeat-until-wrap" class="repeat-settings hidden">
+          <label>Frequência
+            <select id="repeat-interval" name="repeat_interval">
+              <option value="weekdays">Segunda a sexta</option>
+              <option value="1">Toda semana</option>
+              <option value="2">Uma semana sim, outra não</option>
+            </select>
+          </label>
+          <label>Repetir até
+            <input id="repeat-until" name="repeat_until" type="date">
+          </label>
+        </div>
+
+        <label>Observação <span class="optional">(opcional)</span>
+          <textarea name="description" rows="2" placeholder="Sala, professor, endereço…"></textarea>
+        </label>
+        <p id="block-error" class="form-error" role="alert"></p>
+        <button class="button primary wide" type="submit">Salvar na minha agenda</button>
+      </form>
+    </dialog>
+
+    <dialog id="milestone-dialog">
+      <form id="milestone-form" class="dialog-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">MARCO CRÍTICO</p>
+            <h2 id="milestone-dialog-title">Adicionar ao Radar</h2>
+          </div>
+          <button class="icon-button" data-close type="button" aria-label="Fechar">×</button>
+        </div>
+        <input name="event_id" type="hidden">
+        <label>Nome
+          <input name="title" maxlength="160" placeholder="Ex.: Prova de Estruturas" required>
+        </label>
+        <label>Tipo
+          <select name="kind">
+            <option value="exam">💀 Prova</option>
+            <option value="seminar">🎤 Seminário</option>
+            <option value="simple_assignment">📓 Trabalho Bobo</option>
+          </select>
+        </label>
+        <label>Cor
+          <input name="color" type="color" value="#2f2538">
+        </label>
+        <label>Data
+          <input id="milestone-date" name="event_date" type="date" required>
+        </label>
+        <label>Observação <span class="optional">(opcional)</span>
+          <textarea name="description" rows="2"></textarea>
+        </label>
+        <p id="milestone-error" class="form-error" role="alert"></p>
+        <button id="milestone-submit" class="button dark wide" type="submit">Salvar marco</button>
+      </form>
+    </dialog>
+
+    <dialog id="day-dialog">
+      <div class="dialog-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">DETALHES DO DIA</p>
+            <h2 id="day-dialog-title">Dia</h2>
+          </div>
+          <button class="icon-button" data-close type="button" aria-label="Fechar">×</button>
+        </div>
+        <div id="day-dialog-items" class="day-dialog-items"></div>
+        <button id="add-to-day" class="button primary wide" type="button">+ Compromisso neste dia</button>
+      </div>
+    </dialog>
+
+    <dialog id="rollover-dialog">
+      <form id="rollover-form" class="dialog-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">LOG DA SINCERIDADE</p>
+            <h2>Está tudo bem mudar</h2>
+          </div>
+          <button class="icon-button" data-close type="button" aria-label="Fechar">×</button>
+        </div>
+        <p class="dialog-copy">Para quando você quer mover <strong id="rollover-title"></strong>?</p>
+        <input name="block_id" type="hidden">
+        <label>Nova data
+          <input id="rollover-date" name="new_date" type="date" required>
+        </label>
+        <fieldset>
+          <legend>O que aconteceu hoje?</legend>
+          <div class="reason-options">
+            <label><input type="radio" name="reason" value="depression" required><span>🌧️ Depressão</span></label>
+            <label><input type="radio" name="reason" value="procrastination"><span>🦥 Vagabundagem</span></label>
+            <label><input type="radio" name="reason" value="exhaustion"><span>🔋 Cansaço físico/mental</span></label>
+            <label><input type="radio" name="reason" value="everything"><span>🌪️ Tudo junto incluído</span></label>
+          </div>
+        </fieldset>
+        <p id="rollover-error" class="form-error" role="alert"></p>
+        <button class="button primary wide" type="submit">Mover sem culpa</button>
+      </form>
+    </dialog>
+
+    <dialog id="edit-block-dialog">
+      <form id="edit-block-form" class="dialog-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">EDITAR COMPROMISSO</p>
+            <h2>Ajustar agenda</h2>
+          </div>
+          <button class="icon-button" data-close type="button" aria-label="Fechar">×</button>
+        </div>
+        <p class="dialog-copy">Edite só este compromisso ou aplique uma mudança temporária nos dias úteis.</p>
+        <input name="block_id" type="hidden">
+        <label>O que é?
+          <input name="title" maxlength="160" required>
+        </label>
+        <label>Emoji
+          <input name="icon" maxlength="128" placeholder="Ex.: 🖥️ ou /static/icons/serra-gaucha.png">
+        </label>
+        <label>Cor
+          <input name="color" type="color" value="#2563eb">
+        </label>
+        <div class="emoji-picker" data-emoji-picker="edit-block-form" aria-label="Escolher emoji">
+          <button type="button" data-emoji="🖥️" title="Computador">🖥️</button>
+          <button type="button" data-emoji="🏫" title="Faculdade">🏫</button>
+          <button type="button" data-emoji="🪜" title="Estágio">🪜</button>
+          <button type="button" data-emoji="👻" title="Centro Espírita">👻</button>
+          <button type="button" data-emoji="🌀" title="Terapia">🌀</button>
+          <button type="button" data-emoji="📚" title="Estudo">📚</button>
+          <button type="button" data-emoji="🧮" title="Cálculo">🧮</button>
+          <button type="button" data-emoji="📝" title="Trabalho">📝</button>
+          <button type="button" data-emoji="⭐" title="Importante">⭐</button>
+        </div>
+        <label>Categoria
+          <select name="category">
+            <option value="red">🔴 Concreto</option>
+            <option value="green">🟢 Líquido</option>
+            <option value="yellow">🟡 Sem data</option>
+          </select>
+        </label>
+        <label>Aplicar
+          <select id="edit-scope" name="scope">
+            <option value="single">Só este compromisso</option>
+            <option value="all">Todos os iguais</option>
+            <option value="weekdays_15">Dias úteis por 15 dias</option>
+            <option value="weekdays_until">Dias úteis até uma data</option>
+          </select>
+        </label>
+        <label id="edit-date-wrap">Data
+          <input name="scheduled_date" type="date">
+        </label>
+        <label id="edit-range-wrap" class="hidden">Aplicar até
+          <input name="range_end" type="date">
+        </label>
+        <div class="form-row">
+          <label>Começa
+            <input name="start_time" type="time" required>
+          </label>
+          <label>Termina
+            <input name="end_time" type="time" required>
+          </label>
+        </div>
+        <label>Observação <span class="optional">(opcional)</span>
+          <textarea name="description" rows="2"></textarea>
+        </label>
+        <p id="edit-block-error" class="form-error" role="alert"></p>
+        <button class="button primary wide" type="submit">Salvar alteração</button>
+      </form>
+    </dialog>
+
+    <dialog id="delete-block-dialog">
+      <form id="delete-block-form" class="dialog-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">EXCLUIR COMPROMISSO</p>
+            <h2>Remover da agenda</h2>
+          </div>
+          <button class="icon-button" data-close type="button" aria-label="Fechar">×</button>
+        </div>
+        <p class="dialog-copy">O que você quer excluir de <strong id="delete-block-title"></strong>?</p>
+        <input name="block_id" type="hidden">
+        <fieldset>
+          <legend>Escopo</legend>
+          <div class="reason-options">
+            <label><input type="radio" name="scope" value="single"><span>Só este compromisso</span></label>
+            <label><input type="radio" name="scope" value="from_date" checked><span>Este e os próximos iguais</span></label>
+            <label><input type="radio" name="scope" value="all"><span>Todos os iguais</span></label>
+          </div>
+        </fieldset>
+        <p id="delete-block-error" class="form-error" role="alert"></p>
+        <button class="button dark wide" type="submit">Excluir</button>
+      </form>
+    </dialog>
+
+
+    <dialog id="phone-server-dialog">
+      <div class="dialog-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">SERVIDOR DO CELULAR</p>
+            <h2>Link seguro para o A53</h2>
+          </div>
+          <button class="icon-button" data-close type="button" aria-label="Fechar">×</button>
+        </div>
+        <p class="dialog-copy">Abra este endereço no Chrome do celular enquanto o PC estiver ligado na mesma rede Wi-Fi.</p>
+        <label>Link seguro
+          <input id="phone-server-url" readonly>
+        </label>
+        <button id="copy-phone-server-url" class="button primary wide" type="button">Copiar link</button>
+      </div>
+    </dialog>
+
+    <nav class="mobile-bottom-nav" aria-label="Ações principais">
+      <button class="mobile-nav-button" data-refresh type="button">
+        <span aria-hidden="true">↻</span>
+        <strong>Atualizar</strong>
+      </button>
+      <button class="mobile-nav-button" data-open="milestone-dialog" type="button">
+        <span aria-hidden="true">⚫</span>
+        <strong>Marco</strong>
+      </button>
+      <button class="mobile-nav-button primary" data-open="block-dialog" type="button">
+        <span aria-hidden="true">＋</span>
+        <strong>Compromisso</strong>
+      </button>
+    </nav>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <script src="/static/app.js?v=58" type="module"></script>
+  </body>
+</html>

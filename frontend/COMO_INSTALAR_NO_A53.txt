@@ -1,0 +1,40 @@
+Tempo Realista no Samsung A53
+
+Objetivo:
+Instalar no Android como app e deixar os dados salvos no proprio celular.
+
+Passos:
+
+1. No computador, abra o Tempo Realista com INICIAR_APP.bat.
+
+2. No celular A53, conecte no mesmo Wi-Fi do computador.
+
+3. No computador, descubra o IP da rede:
+   - Abra o Prompt de Comando.
+   - Digite: ipconfig
+   - Procure "Endereco IPv4".
+   - Exemplo: 192.168.0.25
+
+4. No Chrome do A53, abra:
+   http://IP-DO-COMPUTADOR:8000
+
+   Exemplo:
+   http://192.168.0.25:8000
+
+5. No Chrome do A53:
+   - Toque nos tres pontos.
+   - Toque em "Adicionar a tela inicial" ou "Instalar app".
+   - Confirme.
+
+6. Abra o app instalado uma vez ainda com o computador ligado.
+   Isso copia os compromissos atuais para o armazenamento do Android.
+
+7. Depois disso, o app consegue abrir no celular usando os dados salvos nele.
+
+Observacoes importantes:
+
+- Isso nao e um .exe. No Android o formato de programa e APK ou app instalado pelo Chrome.
+- Esta versao usa o armazenamento local do Android quando o computador nao esta disponivel.
+- Se voce mudar dados no celular offline, eles ficam no celular.
+- Sincronizacao automatica entre celular e computador sem Wi-Fi/servidor exige uma etapa futura com nuvem ou exportar/importar.
+- Para gerar um APK instalavel por fora do Chrome, sera preciso instalar Android Studio/SDK no computador.
